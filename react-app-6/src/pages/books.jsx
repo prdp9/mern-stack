@@ -1,20 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import useBook from "../hooks/book";
 
 const BooksPage = () => {
-  const [books, setBooks] = useState([]);
+  const { books, setBooks } = useBook();
 
-  useEffect(() => {
-    fetchBooks();
-  }, []);
-
-  const fetchBooks = async () => {
-    await fetch(
-      "https://my-json-server.typicode.com/dmitrijt9/book-api-mock/books"
-    )
-      .then((res) => res.json())
-      .then((data) => setBooks(data));
-  };
   return (
     <div className="flex flex-col items-center ">
       <h2 className="text-xl font-semibold">Books Page</h2>
