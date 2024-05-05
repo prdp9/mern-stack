@@ -1,5 +1,9 @@
 import mongoose from "mongoose"
-const MONGO_URI = 'mongodb+srv://nepalbridalfashionshow:MYPqP4ZvSylsAIcH@cluster0.vuve25w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+import dotenv from "dotenv"
+dotenv.config()
+
+
+const MONGO_URI = process.env.MONGO_URI
 
 console.log(process.env.MONGO_URI)
 
