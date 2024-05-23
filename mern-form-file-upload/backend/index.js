@@ -28,6 +28,10 @@ app.use(cookieParser())
 
 const PORT = 8080
 
+app.get('/', () => {
+res.send('server is running :)')
+})
+
 app.use('/auth', authRoutes)
 app.use('/user', userRoutes)
 app.use('/books', bookRoutes)
