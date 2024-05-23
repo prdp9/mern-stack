@@ -28,7 +28,7 @@ app.use(cookieParser())
 
 const PORT = 8080
 
-app.get('/', () => {
+app.get('/', (req,res) => {
 res.send('server is running :)')
 })
 
