@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../hooks/axios-private";
 import Button from '../components/button'
+import BookCard from "../components/books/card";
 
 const BooksPage = () => {
 
 	const axiosPrivate = useAxiosPrivate()
 
 	const [books, setBooks] = useState([])
+
+	const navigate = useNavigate()
 
 	async function fetchBooks() {
 		try {
@@ -25,10 +28,9 @@ const BooksPage = () => {
 	}, [])
 
 	return (
-		<div className="flex flex-col items-center overflow-hidden">
-			<h2 className="text-xl font-semibold">Books Page</h2>
+		<div className="flex flex-col items-center ">
 
-			<Link to="/books/add">
+			<Link to="/books/add" className="mt-5">
 				<Button >
 					Add Book
 				</Button>
@@ -39,20 +41,14 @@ const BooksPage = () => {
 			}
 			<div className="flex flex-row flex-wrap mt-5 gap-5">
 				{books.map((book) => (
-					<Link key={book.id} to={`/books/${book.id}`}>
-						<div>
-
-							<img src={`http://localhost:8080/${book.image}`} alt="book cover" 
-							className="h-[200px] w-[200px] object-cover rounded-md"
-							/>
-							<h2 className="text-2xl font-bold">
-								{book.title}
-							</h2>
-							<h2>
-								{book.description}
-							</h2>
-						</div>
-					</Link>
+					<div 
+					key={book._id}
+						onClick={() => {
+							navigate(`/books/${book._id}`)
+						}}
+					>
+						<BookCard book={book}  fetchBooks={fetchBooks}/>
+					</div>
 				))}
 			</div>
 		</div>

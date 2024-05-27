@@ -20,7 +20,7 @@ const AddBookPage = () => {
     publicationDate:""
   })
 
-  const [image, setImage] = useState({})
+  const [image, setImage] = useState(null)
 
   const handleFileUpload =async () => {
 
@@ -67,6 +67,12 @@ const AddBookPage = () => {
   return (
     <div className='flex flex-col items-center gap-3'>
       <h2 className='text-3xl font-semibold my-3'>Add Book</h2>
+      {
+        image &&
+        <img src={URL.createObjectURL(image)} alt="book cover"
+          className="h-[300px] w-[300px] object-cover "
+        />
+      }
 
 
       <Input name='title' placeholder='Enter book title' label='Title' value={book.title} onChange={handleChange}/>

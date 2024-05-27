@@ -1,5 +1,5 @@
 import express from 'express';
-import { createBook, getBooks } from '../controller/book.js';
+import { createBook, deleteBook, getBook, getBooks, updateBook } from '../controller/book.js';
 import { authGuard } from '../middleware/auth.js';
 import multer from 'multer'
 
@@ -23,6 +23,13 @@ const router = express.Router()
 router.get("/", authGuard, getBooks)
 
 router.post("/", authGuard, upload.single('images'), createBook)
+
+router.get('/:id', authGuard, getBook)
+
+router.put('/:id', authGuard, upload.single('images'), updateBook)
+
+router.delete('/:id', authGuard,  deleteBook)
+
 
 const bookRoutes = router
 

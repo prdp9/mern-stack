@@ -12,6 +12,7 @@ import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register";
 import { Toaster } from 'react-hot-toast'
 import DashboardPage from "./pages/dashboard";
+import UpdateBookPage from "./pages/update-book";
 
 export default function Page() {
   return (
@@ -27,6 +28,8 @@ export default function Page() {
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/books" element={<BooksPage />} />
         <Route path="/books/add" element={<AddBookPage />} />
+
+        <Route path="/books/update/:bookId" element={<UpdateBookPage />} />
 
         <Route path="/books/:bookId" element={<BookPage />} />
         <Route path="/books/:bookId/:id" element={<BookPage />} />

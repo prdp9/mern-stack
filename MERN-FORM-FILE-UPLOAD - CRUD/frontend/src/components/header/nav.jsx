@@ -37,7 +37,7 @@ const navLinks = [
 const Nav = () => {
   return (
     <div>
-      <ul className="flex gap-5 bg-violet-500 text-white">
+      <ul className="flex justify-center gap-5 bg-violet-500 text-white">
         {navLinks.map((nav, index) => (
           <NavChild nav={nav} test="dev" key={index} />
         ))}
