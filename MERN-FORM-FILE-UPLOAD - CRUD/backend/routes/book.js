@@ -19,7 +19,6 @@ const upload = multer({ storage: storage })
 const router = express.Router()
 
 
-
 router.get("/", authGuard, getBooks)
 
 router.post("/", authGuard, upload.single('images'), createBook)

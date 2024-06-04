@@ -4,8 +4,12 @@ import useAxiosPrivate from '../hooks/axios-private'
 import toast from 'react-hot-toast'
 import Input from '../components/input'
 import { useNavigate, useParams } from 'react-router-dom'
+import TextArea from '../components/text-area'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const UpdateBookPage = () => {
+
+  const queryClient = useQueryClient()
 
   const axiosPrivate = useAxiosPrivate()
 
@@ -24,24 +28,43 @@ const UpdateBookPage = () => {
 
   const [image, setImage] = useState(null)
 
-  useEffect(() => {
-    fetchBookDetail();
-  }, []);
 
-  const fetchBookDetail = async () => {
-    try {
-      const response = await axiosPrivate.get(`/books/${params.bookId}`);
+  const { isLoading } = useQuery({
+    queryKey: ["book", params.bookId],
+    queryFn: async () => {
+      try {
+        const response = await axiosPrivate.get(`/books/${params.bookId}`);
+        const slicedDate = response.data.publicationDate.slice(0, 10)
 
-      const slicedDate = response.data.publicationDate.slice(0, 10)
+        setBook({
+          ...response.data,
+          publicationDate: slicedDate
+        })
+      } catch (error) {
 
-      setBook({
-        ...response.data,
-        publicationDate: slicedDate
+      }
+    },
+    
+  })
+
+  const mutateBook = useMutation({
+    mutationFn: async (formData) => await axiosPrivate.put(`/books/${book._id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    }),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({
+        queryKey: ["books"]
       })
-    } catch (error) {
-
+      toast.success("Updated")
+      navigate('/books')
+    },
+    onError: (error) => {
+      console.log("error occured")
+      toast.error("Error occured")
     }
-  };
+  })
 
   const handleFileUpload = async () => {
 
@@ -59,26 +82,15 @@ const UpdateBookPage = () => {
       formData.append("images", image)
     }
 
+    // submiting the form data
+    console.log('submiting data')
 
-    try {
-      const response = await axiosPrivate.put(`/books/${book._id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      })
-      console.log("response", response.data)
-      toast.success("Updated")
-      navigate('/books')
-    } catch (error) {
-      console.log("error occured")
-      toast.error("Error occured")
-    }
+    mutateBook.mutate(formData)
   }
 
   const handleChange = (e) => {
     const { name, value } = e.target
 
-    console.log('date', value, typeof value)
 
     setBook(prev => {
       return {
@@ -91,9 +103,16 @@ const UpdateBookPage = () => {
     console.log("", e.target.files)
     setImage(e.target.files[0])
   }
+
+
+
+  if (isLoading) {
+    return <p>Loading...</p>
+  }
+
   return (
-    <div className='flex flex-col items-center gap-3'>
-      <h2 className='text-3xl font-semibold my-3'>Add Book</h2>
+    <div className='flex flex-col items-center gap-3 px-5 xl:px-[400px]'>
+      <h2 className='text-3xl font-semibold my-3'>Update Book</h2>
       {
         !image &&
         <img src={`${import.meta.env.VITE_API_URL}/${book.image}`} alt="book cover"
@@ -110,7 +129,7 @@ const UpdateBookPage = () => {
 
 
       <Input name='title' placeholder='Enter book title' label='Title' value={book.title} onChange={handleChange} />
-      <Input name='description' placeholder='Enter book description' label='Description' value={book.description} onChange={handleChange} />
+      <TextArea name='description' placeholder='Enter book description' label='Description' value={book.description} onChange={handleChange} />
       <Input name='price' placeholder='Enter book price' label="Price" value={book.price} onChange={handleChange} />
       <Input name='author' placeholder='Enter book author' label="Author" value={book.author} onChange={handleChange} />
       <Input name='publisher' placeholder='Enter book publisher' label="Publisher" value={book.publisher} onChange={handleChange} />
@@ -120,7 +139,9 @@ const UpdateBookPage = () => {
 
 
       <Button onClick={handleFileUpload}>
-        Submit
+        {
+          mutateBook.isLoading ? "Updating..." : "Update"
+        }
       </Button>
     </div>
   )

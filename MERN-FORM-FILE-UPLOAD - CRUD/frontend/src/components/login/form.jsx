@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/auth'
 import useAxiosPrivate from '../../hooks/axios-private'
+import { useMutation } from '@tanstack/react-query'
 
 const LoginForm = () => {
 
@@ -16,7 +17,7 @@ const LoginForm = () => {
 
     const navigate = useNavigate()
 
-    const axiosPrivate  = useAxiosPrivate()
+    const axiosPrivate = useAxiosPrivate()
 
     const { setAccessToken, setIsAuthenticated } = useAuth()
 
@@ -33,30 +34,24 @@ const LoginForm = () => {
 
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
 
-        try {
-            const response = await axiosPrivate.post("auth/login", formValues)
+    const loginMutate = useMutation({
+        mutationFn: async (formData) => await axiosPrivate.post("auth/login", formData),
+        onSuccess: (response) => {
             if (response?.data?.message) {
                 toast.success(response?.data?.message)
             } else {
                 toast.success('Logged in successfully')
             }
-
-
             // for access token using localstorage
             localStorage.setItem("accessToken", response?.data?.accessToken)
-
             // for refresh and acess token
             setAccessToken(response?.data?.accessToken)
-
-
-
             // for both method
             setIsAuthenticated(true)
             navigate("/dashboard")
-        } catch (error) {
+        },
+        onError: (error) => {
             console.log('error from backend', error?.response?.data?.message)
 
             if (error?.response?.data?.message) {
@@ -65,13 +60,17 @@ const LoginForm = () => {
                 toast.error('Failed to log in')
             }
         }
+    })
 
-        // send backend
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        loginMutate.mutate(formValues)
+
     }
     return (
 
         <form onSubmit={handleSubmit}>
-            <div className='flex flex-col gap-5 justify-center items-center pt-5'>
+            <div className='flex flex-col gap-5 justify-center items-center pt-5 px-5 xl:px-[600px]'>
                 <Input type='email' placeholder='Enter your email'
                     value={formValues.email}
                     name='email'
@@ -89,7 +88,9 @@ const LoginForm = () => {
                 />
 
                 <Button>
-                    Submit
+                    {
+                        loginMutate.isLoading ? 'Loading...' : 'Submit'
+                    }
                 </Button>
             </div>
         </form>

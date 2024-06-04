@@ -42,8 +42,6 @@ const DashboardPage = () => {
         <div className='flex flex-col items-center justify-center '>
             <h2>DashboardPage</h2>
 
-            {accessToken && <h2 className=''>Access Token: {accessToken}</h2>}
-            {isAuthenticated ? <p>User is authenticated</p> : <p>User is not authenticated</p>}
 
             <UserInfo />
             <Button onClick={handleLogout}>

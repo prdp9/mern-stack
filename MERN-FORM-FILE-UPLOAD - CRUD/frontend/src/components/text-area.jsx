@@ -1,4 +1,4 @@
-const Input = ({ type = 'text',
+const TextArea = ({ type = 'text',
     placeholder = 'Enter',
     value,
     onChange,
@@ -9,7 +9,7 @@ const Input = ({ type = 'text',
     return (
         <div className="flex flex-col w-full">
             <label htmlFor={name}>{label && label}</label>
-            <input
+            <textarea
                 id={name}
                 type={type}
                 placeholder={placeholder}
@@ -24,4 +24,4 @@ const Input = ({ type = 'text',
     )
 }
 
-export default Input
+export default TextArea

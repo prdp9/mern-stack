@@ -58,7 +58,7 @@ const RegisterForm = () => {
     return (
 
         <form onSubmit={handleSubmit}>
-            <div className='flex flex-col gap-5 justify-center items-center pt-5'>
+            <div className='flex flex-col gap-5 justify-center items-center pt-5  px-5 xl:px-[600px]'>
                 <Input
                     type='text'
                     placeholder='Enter your name'

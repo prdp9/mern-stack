@@ -3,29 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../hooks/axios-private";
 import Button from '../components/button'
 import BookCard from "../components/books/card";
+import { useQuery } from "@tanstack/react-query";
 
 const BooksPage = () => {
 
 	const axiosPrivate = useAxiosPrivate()
 
-	const [books, setBooks] = useState([])
-
-	const navigate = useNavigate()
-
-	async function fetchBooks() {
-		try {
-			const response = await axiosPrivate.get("/books")
-			console.log(response.data)
-			setBooks(response.data)
-		} catch (error) {
-			console.log("error", error)
-		}
-	}
-
-
-	useEffect(() => {
-		fetchBooks()
-	}, [])
+	const query = useQuery({
+		queryKey: ["books"],
+		queryFn: async () => await axiosPrivate.get("/books"),
+		staleTime: 30000 // 5 minutes
+	})
 
 	return (
 		<div className="flex flex-col items-center ">
@@ -36,18 +24,19 @@ const BooksPage = () => {
 				</Button>
 			</Link>
 
-			{books.length === 0 &&
+			{query?.data?.data?.length === 0 &&
 				<p>No books available</p>
 			}
+
+			{
+				query.isLoading ?
+					<p>Loading...</p>
+					: null
+			}
 			<div className="flex flex-row flex-wrap mt-5 gap-5">
-				{books.map((book) => (
-					<div 
-					key={book._id}
-						onClick={() => {
-							navigate(`/books/${book._id}`)
-						}}
-					>
-						<BookCard book={book}  fetchBooks={fetchBooks}/>
+				{query?.data?.data?.map((book) => (
+					<div key={book._id}>
+						<BookCard book={book} />
 					</div>
 				))}
 			</div>
